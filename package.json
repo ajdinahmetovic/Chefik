@@ -10,9 +10,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "adb": "^0.2.0",
     "clarifai": "^2.9.1",
     "react": "16.9.0",
-    "react-native": "0.61.2",
+    "react-native": "^0.61.2",
     "react-native-camera": "^3.8.0"
   },
   "devDependencies": {

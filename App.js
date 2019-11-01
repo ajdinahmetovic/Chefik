@@ -18,11 +18,12 @@ import {
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Clarifai from 'clarifai'
+import Axios from 'axios';
 
 
 
 const clarifaiAPI = new Clarifai.App({
-  apiKey: 'f36318657930429086a26abcbcda20be'
+  apiKey: '5752fa421b5046f08055ccfebd3e6c23'
  });
 
 class App extends React.Component {
@@ -64,15 +65,25 @@ class App extends React.Component {
       </View>
     )
   }
+
   takePicture = async() => {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };
       const data = await this.camera.takePictureAsync(options);
-      console.log(data.base64);
 
-      clarifaiAPI.models.predict(Clarifai.FOOD_MODEL, {base64: data.base64}).then(
+      clarifaiAPI.models.predict('Chefyk', {base64: data.base64}).then(
         function(response) {
-          console.log(response)
+          var ingredients = response.outputs[0].data.concepts;
+          console.log(ingredients);
+
+          Axios.get('https://api.spoonacular.com/recipes/findByIngredients', {
+            params:{
+              apiKey: 'e17b83d1119341a997fcfc6d7b4849d0',
+              ingredients: 'tomato sauce,pepperoni,cheese',
+              ranking: 2
+              //ingredients[0].name+','+ingredients[1].name+','+ingredients[2].name 
+            }
+          }).then(recipes => console.log(recipes))
         },
         function(err) {
           console.log(err)
