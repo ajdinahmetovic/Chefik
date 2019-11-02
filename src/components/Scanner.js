@@ -14,6 +14,8 @@ import Clarifai from 'clarifai';
 import Axios from 'axios';
 import { withNavigationFocus } from 'react-navigation'; 
 import LottieView from 'lottie-react-native/src/js';
+import Card from './Recent/Card'
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const clarifaiAPI = new Clarifai.App({
@@ -21,63 +23,178 @@ const clarifaiAPI = new Clarifai.App({
  });
 
 
- function getRecipeInstructions(recipeID) {
-  Axios.get('https://api.spoonacular.com/recipes/'+recipeID+'/analyzedInstructions', {
+
+ async function getRecipeInstructions(recipeID) {
+  return await Axios.get('https://api.spoonacular.com/recipes/'+recipeID+'/analyzedInstructions', {
           params:{
             apiKey: 'e17b83d1119341a997fcfc6d7b4849d0',
             stepBreakdown: true
           }
-    }).then(recipes => console.log(recipes)).catch(error => console.log(error))
-};
+    })
+    
+}
+
+async function getRecipeDetails(recipeID) {
+  return await Axios.get(`https://api.spoonacular.com/recipes/${recipeID}/information`, {
+    params: {
+      apiKey: 'e17b83d1119341a997fcfc6d7b4849d0',
+    }
+  }).then(details => {
+
+  })
+}
 
 class Scanner extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      isLoading: false
+      isLoading: false,
+      recipesFetched: false
     }
   }
 
-  
+  recipeDetails = {}
+  recipeInstructinos = {}
+
+  dummyData = [
+    {
+      imageURL: null,
+      title: 'Dish 1',
+      description: '',
+      dishType: 'Snack',
+      id: 0
+    },
+    {
+      imageURL: null,
+      title: 'Dish 2',
+      description: '',
+      dishType: 'Dairy',
+      id: 1
+    },
+    {
+      imageURL: null,
+      title: 'Jelo 1',
+      dishType: 'Main',
+      id: 2
+    },
+    {
+      imageURL: null,
+      title: 'Jelo 1',
+      dishType: 'Salad',
+      id: 3
+    },
+  ]
 
   takePicture = async() => {
-    this.setState({isLoading: true})
+    this.setState({recipesFetched: false})
     if (this.camera) {
       const options = { quality: 0.5, base64: true };
       const data = await this.camera.takePictureAsync(options);
-
-      clarifaiAPI.models.predict('Chefyk', {base64: data.base64}).then(
-        function(response) {
+      this.setState({isLoading: true})
+      clarifaiAPI.models.predict('Chefyk', {base64: data.base64}).then(response => {
           var ingredients = response.outputs[0].data.concepts;
           console.log(ingredients);
   
-          /*Axios.get('https://api.spoonacular.com/recipes/findByIngredients', {
+          Axios.get('https://api.spoonacular.com/recipes/findByIngredients', {
             params:{
+              number: 5,
               apiKey: 'e17b83d1119341a997fcfc6d7b4849d0',
               ingredients: ingredients[0].name+','+ingredients[1].name+','+ingredients[2].name+','+ingredients[3].name+','+ingredients[4].name,
               ranking: 2
             }
           }).then(recipes => {
-            console.log(recipes);
-            recipes.data.forEach(recipe => {
-              getRecipeInstructions(recipe.id);
+            this.dummyData.forEach((card,i) => {
+              card.imageURL = recipes.data[i].image
+              card.title = recipes.data[i].title
+              card.id = recipes.data[i].id
             })
+            console.log(recipes);
+            recipes.data.forEach(async recipe => {
+              const [instructions, details] = await Promise.all([getRecipeInstructions(recipe.id), getRecipeDetails(recipe.id)])
 
-          })*/
+              this.recipeInstructinos[recipe.id] = instructions
+              this.recipeDetails[recipe.id] = details
+            })
+              this.setState({isLoading: false});
+              this.setState({recipesFetched: true})
+          })
         },
         function(err) {
           console.log(err)
         }
       )
+      
     }
   };
 
-  
+  openCard = (card) => {
+    let details = this.recipeDetails[card.id]
+    let instructions = this.recipeInstructinos[card.id]
+
+    return(
+      <View style={{backgroundColor: '#ff7878', width: '100%', height: '100%', alignItems: 'center', flexDirection: 'row'}}>
+        <View>
+          <Text>{details.title}</Text>
+
+          <View></View>
+
+          <Text>Servings: {details.servings}</Text>
+          <Text>Time to prepare: {details.readyInMinutes} minutes</Text>
+
+          <View></View>
+
+          <View></View>
+
+          <Text>INGRIDIENTS</Text>
+
+          <View></View>
+
+          <View></View>
+
+          <View>
+            <Text>INSTRUCTIONS</Text>
+            <Image></Image>
+          </View>
+
+          <View></View>
+        </View>
+      </View>
+    )
+  }
+ 
 
   render() {
     const { isFocused } = this.props
-    if(this.state.isLoading){
+    if(this.state.recipesFetched){
+      return(
+      <View>
+        <View style={{backgroundColor: '#ff7878', width: '100%', height: 50,alignItems: 'center',flexDirection: 'row'}}>
+        <TouchableOpacity onPress={()=>{
+          this.setState({isLoading: false});
+          this.setState({recipesFetched: false})
+        }}>
+          <Image style={{ marginLeft:20 }}source={require('../assets/left-arrow.png')}/>
+        </TouchableOpacity>
+         <View style={{width: 100}}/>
+          <Text style={{color: 'white',fontWeight: 'bold',fontSize:25}}>RECIPES</Text>
+        </View>
+        <ScrollView contentContainerStyle={{alignItems: 'center'}}>
+        {
+        this.dummyData.map(card => {
+              return (
+              <TouchableOpacity onPress={() => this.openCard(card)}>
+                    <Card img = {card.imageURL} title={card.title} description={card.description} dishType={card.dishType}/>
+              </TouchableOpacity>
+              )
+            })
+        }
+      </ScrollView>
+      </View>
+      )
+      
+    }
+    else if(this.state.isLoading){
       return (
         <View style={{flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
           <LottieView 
@@ -86,13 +203,14 @@ class Scanner extends React.Component {
             loop={true}
             
           />
+          <Text style={{fontFamily: 'Montserrat-Light', color:'#707070', fontSize: 23, top: 100}}>Mixing your ingredients</Text>
         </View>
       )
     } else {
     return(
       <View style = { styles.container }>
         {
-          (isFocused && !this.state.isLoading) && <RNCamera
+          (isFocused && !this.state.isLoading && !this.state.recipesFetched) && <RNCamera
           ref={ref => {
             this.camera = ref;
           }}
