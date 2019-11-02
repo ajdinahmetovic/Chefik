@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 
 
-// jebo majku radi ko singerica
-//FB provjeri
+
+//Idemo sad u scanner
 class Card extends React.Component {
 
   render() {

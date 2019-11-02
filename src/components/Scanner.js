@@ -34,11 +34,15 @@ class Scanner extends React.Component {
 
   constructor(props){
     super(props);
+    this.state = {
+      isLoading: false
+    }
   }
 
   
 
   takePicture = async() => {
+    this.setState({isLoading: true})
     if (this.camera) {
       const options = { quality: 0.5, base64: true };
       const data = await this.camera.takePictureAsync(options);
@@ -73,10 +77,21 @@ class Scanner extends React.Component {
 
   render() {
     const { isFocused } = this.props
+    if(this.state.isLoading){
+      return (
+        <View style={{flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+          <LottieView 
+            source={require('../assets/cameraanimation.json')} 
+            autoPlay 
+            loop={true}
+          />
+        </View>
+      )
+    } else {
     return(
       <View style = { styles.container }>
         {
-          isFocused && <RNCamera
+          (isFocused && !this.state.isLoading) && <RNCamera
           ref={ref => {
             this.camera = ref;
           }}
@@ -127,6 +142,20 @@ class Scanner extends React.Component {
     </View>
     
     )
+    }
+  }
+
+
+  loadingView () {
+      return (
+        <View style={{flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+          <LottieView 
+            source={require('../assets/cameraanimation.json')} 
+            autoPlay 
+            loop={true}
+          />
+        </View>
+      )
   }
 }
   
