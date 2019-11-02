@@ -20,7 +20,7 @@ const TabNavigator = createBottomTabNavigator({
     
     navigationOptions: {
       tabBarLabel: 'Recent',
-      tabBarIcon: () => <Image source={require('./src/assets/recent.png')} style={{width: 27, height: 21}}/>
+      tabBarIcon: () => <Image source={require('./src/assets/recent.png')} style={{width: 27, height: 25}}/>
     }
   },
 

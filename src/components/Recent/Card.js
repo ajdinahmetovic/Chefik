@@ -9,15 +9,15 @@ import {
 
 
 
-//Idemo sad u scanner
+
 class Card extends React.Component {
 
   render() {
     return(
       <View style={styles.container}>
-            <Image  source={this.props.img} style={{width: 238, height: 185, borderTopLeftRadius: 20, borderTopRightRadius: 20}}/>
+            <Image source={{uri: this.props.img.toString()}} style={{width: 238, height: 185, borderTopLeftRadius: 20, borderTopRightRadius: 20}}/>
             <View style={{marginLeft: 10}}>
-              <Text style={{marginTop: 11, fontSize: 21, fontWeight: 'bold'}}>
+              <Text style={{marginTop: 11, fontSize: 21, fontWeight: 'bold',fontFamily: 'Montserrat'}}>
                 {this.props.title}
               </Text>
               <View style={styles.pill}>
@@ -25,9 +25,15 @@ class Card extends React.Component {
                   {this.props.dishType}
                 </Text>
               </View>
-              <Text style={{fontSize: 10}}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={{left: 5,fontSize: 10,top: 2,color: 'gray',fontFamily: 'Montserrat'}}>
                 {this.props.description}
-              </Text>
+                </Text>
+                <View style={{width: 68}}/>
+                <Image style={{width: 25, height: 25}} source={this.props.icon1}></Image>
+                <Image style={{width: 25, height: 25}} source={this.props.icon2}></Image>
+              </View>
+              
             </View>
       </View>
     )
