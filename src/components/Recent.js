@@ -71,9 +71,13 @@ class Recent extends React.Component {
       return(
         <View style={{backgroundColor: 'white', width: '100%', height: '100%',flexDirection: 'row'}}>
         <TouchableOpacity style={{top: 20,zIndex: 1000 }} onPress={()=>{this.setState({showRecipe: false})}}>
-          <Image style={{ marginLeft:20}}source={require('../assets/left-arrow.png')}/>
+          <View><Image style={{ marginLeft:20}}source={require('../assets/left-arrow.png')}/></View>
+          
         </TouchableOpacity>
-          <Image style={{right: 43,width: '100%', height: '30%', overlayColor: '#ff7878', }} source={{uri: this.state.card.img}}/>
+        <View style={{position:'absolute', width: '100%', height: '30%', backgroundColor: 'rgba(255,120,120,0.5)',zIndex: 10,borderBottomLeftRadius: 10,borderBottomRightRadius: 10}}></View>
+        <Image style={{right: 43,width: '100%', height: '30%', borderBottomLeftRadius: 10,borderBottomRightRadius: 10}} source={{uri: this.state.card.img}}/>
+        <Text style={{position: 'absolute',fontSize:28,fontWeight:'bold',top: 210,left: 10,fontFamily:'Montserrat',textDecorationLine: 'underline'}}>{this.state.card.title.toUpperCase()}</Text>
+
         </View>
       )
     }else{
