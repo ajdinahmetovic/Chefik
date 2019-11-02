@@ -84,6 +84,7 @@ class Scanner extends React.Component {
             source={require('../assets/cameraanimation.json')} 
             autoPlay 
             loop={true}
+            
           />
         </View>
       )
@@ -114,11 +115,10 @@ class Scanner extends React.Component {
           }}
           
          />
-        }
 
-          
-      
-      <ImageBackground style={styles.cameraView} source={require('../assets/bottombar.png')}>
+         
+        }
+       <ImageBackground style={styles.cameraView} source={require('../assets/bottombar.png')}>
         <View style={styles.actionsContainer}>
           <View style={styles.snapContainer}>
             <TouchableOpacity onPress={this.takePicture.bind(this)}>
@@ -128,6 +128,9 @@ class Scanner extends React.Component {
         </View>
      
       </ImageBackground>
+          
+      
+      
 
       {/*
         <View style={{width: 220, height: 220, bottom: 300}}>  

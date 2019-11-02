@@ -6,16 +6,12 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  ScrollView
   
 } from 'react-native';
 import Card from './Recent/Card';
 
-
-
-
 class Recent extends React.Component {
-
 
   dummyData = [
     {
@@ -44,17 +40,24 @@ class Recent extends React.Component {
     },
   ]
 
+  searchExecute = (searchText) => {
+    
+    console.log('proslo roki')
+  }
+
   render() {
+
+    let searchTextValue = ''
+
     return(
-      <View style={styles.container}>
+      <View style={styles.container}> 
 
         <View style={styles.bar}>
-            <TouchableOpacity style={{marginTop: 20}}>
-              <Image style={{width:22, height: 22}} source={require('../assets/search.png')}/>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={{marginTop: 20, marginLeft: 20}}>
-              <Image style={{width:22, height: 22}} source={require('../assets/staring.png')}/>
+            <TextInput onChangeText={(value) => searchTextValue = value} placeholder= 'Search...' style={styles.textInput}></TextInput>            
+
+            <TouchableOpacity onPress={(searchTextValue) => this.searchExecute(searchTextValue)} style={{marginBottom: 9, marginLeft: 5, alignItems:'center', width: 40}}>
+              <Image style={{width:22, height: 22}} source={require('../assets/search.png')}/>
             </TouchableOpacity>
 
         </View>
@@ -87,12 +90,14 @@ class Recent extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  
+  container: {
     flex: 1,
     backgroundColor: '#EFEFEF'
   },
-  bar:{
-    paddingLeft: '80%',
+
+  bar: {
+    marginTop: 20,
     height: 43,
     width: '100%',
     flexDirection: 'row',
@@ -100,10 +105,22 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   },
 
-  titleView:{
+  titleView: {
     marginTop: 56,
     marginLeft: 19,
 
+  },
+
+  textInput: {
+    height: 40,
+    width: '85%',
+    paddingVertical: 0,
+    borderWidth: 1,
+    borderColor: '#D3D3D3',
+    alignItems: 'flex-start',
+    fontSize: 14,
+    lineHeight: 14,
+    marginLeft: 10
   }
   
 });
