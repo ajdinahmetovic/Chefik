@@ -12,9 +12,12 @@
   "dependencies": {
     "adb": "^0.2.0",
     "clarifai": "^2.9.1",
+    "lottie-react-native": "^3.2.1",
     "react": "16.9.0",
     "react-native": "^0.61.2",
-    "react-native-camera": "^3.8.0"
+    "react-native-camera": "^3.8.0",
+    "react-native-gesture-handler": "^1.4.1",
+    "react-navigation": "^3.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
