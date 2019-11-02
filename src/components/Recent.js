@@ -75,8 +75,24 @@ class Recent extends React.Component {
         </TouchableOpacity>
         <View style={{position:'absolute', width: '100%', height: '30%', backgroundColor: 'rgba(255,120,120,0.5)',zIndex: 10,borderBottomLeftRadius: 10,borderBottomRightRadius: 10}}></View>
         <Image style={{right: 43,width: '100%', height: '30%', borderBottomLeftRadius: 10,borderBottomRightRadius: 10}} source={{uri: this.state.card.img}}/>
-        <Text style={{position: 'absolute',fontSize:28,fontWeight:'bold',top: 210,left: 10,fontFamily:'Montserrat',textDecorationLine: 'underline'}}>{this.state.card.title.toUpperCase()}</Text>
-
+        <Text style={{position: 'absolute',fontSize:28,fontWeight:'bold',top: 210,left: 10,fontFamily:'Montserrat'}}>{this.state.card.title.toUpperCase()}</Text>
+        <View style={styles.pill}>
+                <Text style={{fontSize: 15, color:'#ff7878',fontFamily:'Montserrat-Light'}}>
+                  {this.state.card.dishType}
+                </Text>
+        </View>
+        <Text style={{left: 10,fontSize: 17,top: 275,color: 'gray',fontFamily: 'Montserrat',position: 'absolute',}}>
+                {this.state.card.description}
+                </Text>
+                <Image style={{width: 25, height: 25,position: 'absolute',top: 320,left: 10}} source={require('../assets/icon1.png')}></Image>
+                <Image style={{width: 25, height: 25,position: 'absolute',top: 320,left: 40}} source={require('../assets/icon2.png')}></Image>                
+                <Text style={{fontSize: 15, color:'rgba(166, 171, 179,0.5)',fontFamily:'Montserrat-Light',position: 'absolute',top: 340, left: 10}}>
+                  ___________________________________________________
+                </Text>
+                <Text style={{position: 'absolute',fontSize:28,top: 360,left: 10,fontFamily:'Montserrat', color: '#ff7878'}}>INGREDIENTS</Text>
+                {
+                  
+                }
         </View>
       )
     }else if (this.state.showRecipe == 0) {
@@ -85,9 +101,9 @@ class Recent extends React.Component {
   
           <View style={styles.bar}>
 
-            <TextInput onChangeText={(value) => searchTextValue = value} placeholder= 'Search...' style={styles.textInput}></TextInput>            
+            <TextInput onChangeText={(value) => searchTextValue = value} placeholder= '  Search...' style={styles.textInput}></TextInput>            
 
-            <TouchableOpacity onPress={(searchTextValue) => this.searchExecute(searchTextValue)} style={{marginBottom: 9, marginLeft: 5, alignItems:'center', width: 40}}>
+            <TouchableOpacity onPress={(searchTextValue) => this.searchExecute(searchTextValue)} style={{marginBottom: 9, alignItems:'center', width: 40}}>
               <Image style={{width:22, height: 22}} source={require('../assets/search.png')}/>
             </TouchableOpacity>
           </View>
@@ -128,6 +144,18 @@ class Recent extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  pill: {
+    left: 10,
+    position: 'absolute', 
+    top: 250,
+    width: 100,
+    height: 20,
+    borderWidth: 2,
+    borderRadius: 15,
+    borderColor: '#FF7878',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   
   container: {
     flex: 1,
@@ -150,6 +178,10 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     height: 40,
     width: '85%',
     paddingVertical: 0,

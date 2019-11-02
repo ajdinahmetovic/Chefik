@@ -50,12 +50,15 @@ class Scanner extends React.Component {
     super(props);
     this.state = {
       isLoading: false,
-      recipesFetched: false
+      recipesFetched: false,
+      showRecipe: false,
+      card: null
     }
   }
 
   recipeDetails = {}
   recipeInstructinos = {}
+  recipeIng = {}
 
   dummyData = [
     {
@@ -63,26 +66,30 @@ class Scanner extends React.Component {
       title: 'Dish 1',
       description: '',
       dishType: 'Snack',
-      id: 0
+      id: 0,
+      description: 'Servings: 4\nTime to prepare: 45min',
     },
     {
       imageURL: null,
       title: 'Dish 2',
       description: '',
       dishType: 'Dairy',
-      id: 1
+      id: 1,
+      description: 'Servings: 5\nTime to prepare: 55min',
     },
     {
       imageURL: null,
       title: 'Jelo 1',
       dishType: 'Main',
-      id: 2
+      id: 2,
+      description: 'Servings: 6\nTime to prepare: 30min',
     },
     {
       imageURL: null,
       title: 'Jelo 1',
       dishType: 'Salad',
-      id: 3
+      id: 3,
+      description: 'Servings: 10\nTime to prepare: 50min',
     },
   ]
 
@@ -104,6 +111,23 @@ class Scanner extends React.Component {
               ranking: 2
             }
           }).then(recipes => {
+            recipes.data.forEach((ele, index) => {
+              ele.usedIngredients.forEach(element => {
+                if (this.recipeIng[ele.id] == undefined) {
+                  this.recipeIng[ele.id] = [element.originalString]
+                } else {
+                  this.recipeIng[ele.id].push(element.originalString)
+                }
+              })
+
+              ele.missedIngredients.forEach(element => {
+                if (this.recipeIng[ele.id] == undefined) {
+                  this.recipeIng[ele.id] = [element.originalString]
+                } else {
+                  this.recipeIng[ele.id].push(element.originalString)
+                }
+              })
+            })
             this.dummyData.forEach((card,i) => {
               card.imageURL = recipes.data[i].image
               card.title = recipes.data[i].title
@@ -127,6 +151,12 @@ class Scanner extends React.Component {
       
     }
   };
+
+  goToYT = (text) => {
+    Axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${text}&key=AIzaSyBOXgzYMf_rD4CzYvu8gKMG4FxotDEsHsg`).then( res => {
+      console.log(`https://www.youtube.com/watch?v=${res.items.id.videoId}`)
+    })
+  }
 
   openCard = (card) => {
     let details = this.recipeDetails[card.id]
@@ -167,32 +197,83 @@ class Scanner extends React.Component {
   render() {
     const { isFocused } = this.props
     if(this.state.recipesFetched){
-      return(
-      <View>
-        <View style={{backgroundColor: '#ff7878', width: '100%', height: 50,alignItems: 'center',flexDirection: 'row'}}>
-        <TouchableOpacity onPress={()=>{
-          this.setState({isLoading: false});
-          this.setState({recipesFetched: false})
-        }}>
-          <Image style={{ marginLeft:20 }}source={require('../assets/left-arrow.png')}/>
+      if(this.state.showRecipe){
+        return(<View style={{backgroundColor: 'white', width: '100%', height: '100%',flexDirection: 'row'}}>
+        <TouchableOpacity style={{top: 20,zIndex: 1000 }} onPress={()=>{this.setState({showRecipe: false})}}>
+          <View><Image style={{ marginLeft:20}}source={require('../assets/left-arrow.png')}/></View>
+          
         </TouchableOpacity>
-         <View style={{width: 100}}/>
-          <Text style={{color: 'white',fontWeight: 'bold',fontSize:25}}>RECIPES</Text>
+        <View style={{position:'absolute', width: '100%', height: '30%', backgroundColor: 'rgba(255,120,120,0.5)',zIndex: 10,borderBottomLeftRadius: 10,borderBottomRightRadius: 10}}></View>
+        <Image style={{right: 43,width: '100%', height: '30%', borderBottomLeftRadius: 10,borderBottomRightRadius: 10}} source={{uri: this.state.card.imageURL}}/>
+        <Text style={{position: 'absolute',fontSize:28,fontWeight:'bold',top: 210,left: 10,fontFamily:'Montserrat'}}>{this.state.card.title.toUpperCase()}</Text>
+        
+        <View style={styles.pill}>
+                <Text style={{fontSize: 15, color:'#ff7878',fontFamily:'Montserrat-Light'}}>
+                  {this.state.card.dishType}
+                </Text>
         </View>
-        <ScrollView contentContainerStyle={{alignItems: 'center'}}>
-        {
-        this.dummyData.map(card => {
-              return (
-              <TouchableOpacity onPress={() => this.openCard(card)}>
-                    <Card img = {card.imageURL} title={card.title} description={card.description} dishType={card.dishType}/>
-              </TouchableOpacity>
-              )
-            })
-        }
-      </ScrollView>
-      </View>
-      )
-      
+        <Text style={{left: 10,fontSize: 17,top: 275,color: 'gray',fontFamily: 'Montserrat',position: 'absolute',}}>
+                {this.state.card.description}
+                </Text>
+                <Image style={{width: 25, height: 25,position: 'absolute',top: 320,left: 10}} source={require('../assets/icon1.png')}></Image>
+                <Image style={{width: 25, height: 25,position: 'absolute',top: 320,left: 40}} source={require('../assets/icon2.png')}></Image>                
+                <Text style={{fontSize: 15, color:'rgba(166, 171, 179,0.5)',fontFamily:'Montserrat-Light',position: 'absolute',top: 340, left: 10}}>
+                  ___________________________________________________
+                </Text>
+                <Text style={{position: 'absolute',fontSize:28,top: 360,left: 10,fontFamily:'Montserrat', color: '#ff7878'}}>INGREDIENTS</Text>
+
+                {
+                  this.recipeIng[this.state.card.id].map((ele, index) => {
+                    return (<Text style={{position: 'absolute',fontSize:17,top: 390+index*25,left: 10,fontFamily:'Montserrat', color: 'gray'}}>{ele}</Text>)
+                  })
+                }
+
+                <Text style={{fontSize: 15, color:'rgba(166, 171, 179,0.5)',fontFamily:'Montserrat-Light',position: 'absolute',top: 455, left: 10}}>
+                  ___________________________________________________
+                </Text>
+
+                  
+                  <Text style={{position: 'absolute',fontSize:28,top: 475,left: 10,fontFamily:'Montserrat', color: '#ff7878'}}>INSTRUCTIONS</Text>
+                  <TouchableOpacity>
+                  <Image style={{position: 'absolute', top: 450, left: 250,width: 30, height: 30}} source={require('../assets/youtube.png')}></Image>
+                  </TouchableOpacity>
+
+                {
+                  this.recipeInstructinos[this.state.card.id].data[0].steps.map((ele, index) => {
+                    return (
+                      <Text style={{position: 'absolute',fontSize:17,top: 500+index*25,left: 10,fontFamily:'Montserrat', color: 'gray'}}>{ele.step}</Text>
+                    )
+                  })
+                }
+        </View>)
+        
+      }else{
+        return(
+          <View>
+            <View style={{backgroundColor: '#ff7878', width: '100%', height: 50,alignItems: 'center',flexDirection: 'row'}}>
+            <TouchableOpacity onPress={()=>{
+              this.setState({isLoading: false});
+              this.setState({recipesFetched: false})
+            }}>
+              <Image style={{ marginLeft:20 }}source={require('../assets/left-arrow.png')}/>
+            </TouchableOpacity>
+             <View style={{width: 100}}/>
+              <Text style={{color: 'white',fontWeight: 'bold',fontSize:25}}>RECIPES</Text>
+            </View>
+            <ScrollView contentContainerStyle={{alignItems: 'center'}}>
+            {
+            this.dummyData.map(card => {
+                  return (
+                  <TouchableOpacity onPress={() => this.setState({showRecipe: true, card: card})}>
+                        <Card img = {card.imageURL} title={card.title} description={card.description} dishType={card.dishType}/>
+                  </TouchableOpacity>
+                  )
+                })
+            }
+          </ScrollView>
+          </View>
+          )    
+      }
     }
     else if(this.state.isLoading){
       return (
@@ -281,6 +362,18 @@ class Scanner extends React.Component {
 }
   
   const styles = StyleSheet.create({
+    pill: {
+      left: 10,
+      position: 'absolute', 
+      top: 250,
+      width: 100,
+      height: 20,
+      borderWidth: 2,
+      borderRadius: 15,
+      borderColor: '#FF7878',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
     cameraButton:{
       width: 65,
       height: 65,
